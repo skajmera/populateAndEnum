@@ -5,7 +5,7 @@ const userRouters = require("./routes/userRoutes");
 const customerRouters = require("./routes/customerRoutes");
 const app = express();
 
-const PORT = 3000;
+const PORT = 6379
 
 app.use(express.json());
 app.use(morgan("dev"));

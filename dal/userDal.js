@@ -1,9 +1,42 @@
 const User = require("../model/userModel");
+const redis=require('redis')
+///C:\redis\64bit>
+var client = redis.createClient({
+  host: '127.0.0.1',
+  port: 6379});
+
+///////////////
+// client.DEL('postdata',(err,redis_data)=>{
+//   if(err){
+//     console.log(err)
+//     throw err
+//   }
+/////////
 
 const findUser = async (data) => {
   const user = await User.findById(data);
+  if(!user){
+    console.log("data not found")
+  }
+  await client.set('postdata',JSON.stringify(user))
   return user;
 };
+
+const redis_post=(req,res,next)=>{
+  client.get('postdata',(err,redis_data)=>{
+    if(err){
+      console.log(err)
+      throw err
+    }
+    else if(redis_data){
+      console.log('redisdata');
+     return res.send(JSON.parse(redis_data))
+    }
+    else{
+      next()
+    }
+  })
+}
 
 const storeUser = async (userToStore) => {
   const storedUser = await User.create(userToStore);
@@ -21,6 +54,7 @@ const updateUser = async (userData) => {
     { $set: userData.toUpdate },
     { new: true }
   );
+  await client.set('postdata',JSON.stringify(user))
   return user;
 };
 
@@ -41,4 +75,6 @@ module.exports = {
   updateUser,
   findAll,
   deleteAll,
+  redis_post
 };
+

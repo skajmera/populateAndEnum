@@ -63,3 +63,22 @@ exports.loginUser = async (req, res) => {
     data: userData
   };
 };
+
+exports.updateUser = async (req, res) => {
+  const _id = req.params.id;
+  const updateData = {
+    _id,
+    toUpdate: {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+    },
+  };
+  
+  const update = await usersDataAccess.updateUser(updateData);
+  return {
+    error: false,
+    sucess: true,
+    message: "updated user successfully",
+    data: update,
+  };
+};
